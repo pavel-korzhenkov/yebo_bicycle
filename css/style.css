@@ -246,6 +246,10 @@ input[type=text], input[type=email], input[type=tel], textarea {
   border: 1px solid #a8abac;
 }
 
+.input.err {
+  border: 1px solid red;
+}
+
 textarea.input {
   resize: none;
   padding: 0px 0px;
