@@ -117,6 +117,92 @@ function forms(){
 	});	
 }
 forms();
+
+//VALIDATE FORMS
+$('form button[type=submit]').click(function(){
+		var er=0;
+		var form=$(this).parents('form');
+		var ms=form.data('ms');
+	$.each(form.find('.req'), function(index, val) {
+		er+=formValidate($(this));
+	});
+	if(er==0){
+		removeFormError(form);
+		if(ms!=null && ms!=''){
+			showMessageByClass(ms);
+			return false;
+		}
+	}else{
+		return false;
+	}
+});
+function formValidate(input){
+	var er=0;
+	var form=input.parents('form');
+
+	if(input.attr('name')=='email' || input.hasClass('email')){
+		if(input.val()!=input.attr('data-value')){
+			var em=input.val().replace(" ","");
+			input.val(em);
+		}
+		if(!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,8})+$/.test(input.val())) || input.val()==input.attr('data-value')){
+				er++;
+			addError(input);
+		}else{
+			removeError(input);
+		}
+	}else{
+		if(input.val()=='' || input.val()==input.attr('data-value')){
+			er++;
+			addError(input);
+		}else{
+			removeError(input);
+		}
+	}
+
+	return er;
+}
+function showMessageByClass(ms){
+	$('.popup').hide();
+	popupOpen('message.'+ms,'');
+}
+function addError(input){
+		input.addClass('err');
+		input.parent().addClass('err');
+		input.parent().find('.form__error').remove();
+	if(input.hasClass('email')){
+			var error='';
+		if(input.val()=='' || input.val()==input.attr('data-value')){
+			error=input.data('error');
+		}else{
+			error=input.data('error');
+		}
+		if(error!=null){
+			input.parent().append('<div class="form__error">'+error+'</div>');
+		}
+	}else{
+		if(input.data('error')!=null && input.parent().find('.form__error').length==0){
+			input.parent().append('<div class="form__error">'+input.data('error')+'</div>');
+		}
+	}
+	if(input.parents('.select-block').length>0){
+		input.parents('.select-block').parent().addClass('err');
+		input.parents('.select-block').find('.select').addClass('err');
+	}
+}
+function removeFormError(form){
+	form.find('.form__generalerror').hide().html('');
+}
+function removeError(input){
+	input.removeClass('err');
+	input.parent().removeClass('err');
+	input.parent().find('.form__error').remove();
+
+	if(input.parents('.select-block').length>0){
+		input.parents('.select-block').parent().removeClass('err');
+		input.parents('.select-block').find('.select').removeClass('err').removeClass('active');
+	}
+}
 var isMobile = { Android: function () { return navigator.userAgent.match(/Android/i); }, BlackBerry: function () { return navigator.userAgent.match(/BlackBerry/i); }, iOS: function () { return navigator.userAgent.match(/iPhone|iPad|iPod/i); }, Opera: function () { return navigator.userAgent.match(/Opera Mini/i); }, Windows: function () { return navigator.userAgent.match(/IEMobile/i); }, any: function () { return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows()); } };
 if (isMobile.any()) { }
 
